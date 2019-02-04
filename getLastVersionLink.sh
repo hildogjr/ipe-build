@@ -10,7 +10,8 @@ link=$(wget -qO- $1 | grep -oiP "\<a.+href\s*=\s*[\"\']*([^\>\"\']*$2[^\>\"\']*?
 numberLinks=$(echo "$link" | wc -l)
 if (( $numberLinks > 1)); then
 	echo "Got more the one site match to $2 in $1." >&2
-	link=$(echo "$link" | sort -n | tail -1) # Alphabetic-ascii reverse order to recognize the last version in the case of presence of more than one link that match.
+	link=$(echo "$link" | sort -V | tail -1) # Version sort.
+	#sort -n # Alphabetic-ascii reverse order to recognize the last version in the case of presence of more than one link that match.
 	echo "Selected '$link'." >&2
 fi
 #	# Some site have a wrong pattern in some link (case of the IPE repository site, the sub folders and files link, that have to use the site dominion, start with wrong ":").
