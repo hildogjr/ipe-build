@@ -37,7 +37,7 @@ link=$(bash "$ACTUAL_DIR"/getLastVersionLink.sh $link 'ipe\-[0-9]+\.[0-9]+\.[0-9
 	link="https://dl.bintray.com/otfried/generic/ipe/7.2/ipe-7.2.7-src.tar.gz" # Default link.
 	)
 
-link="https://dl.bintray.com/otfried/generic/ipe/7.2/ipe-7.2.10-src.tar.gz"
+#link="https://dl.bintray.com/otfried/generic/ipe/7.2/ipe-7.2.10-src.tar.gz"
 #link="https://dl.bintray.com/otfried/generic/ipe/7.2/ipe-7.2.7-src.tar.gz" #TODO 7.2.8 have a zoom error on Ubuntu 16.04.
 
 version=$(echo $link | grep -ioP '[0-9]+\.[0-9]+\.[0-9]+')
