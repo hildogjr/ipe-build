@@ -37,8 +37,7 @@ link=$(bash "$ACTUAL_DIR"/getLastVersionLink.sh $link 'ipe\-[0-9]+\.[0-9]+\.[0-9
 	link="https://dl.bintray.com/otfried/generic/ipe/7.2/ipe-7.2.7-src.tar.gz" # Default link.
 	)
 
-#link="https://dl.bintray.com/otfried/generic/ipe/7.2/ipe-7.2.10-src.tar.gz"
-#link="https://dl.bintray.com/otfried/generic/ipe/7.2/ipe-7.2.7-src.tar.gz" #TODO 7.2.8 have a zoom error on Ubuntu 16.04.
+#link="https://dl.bintray.com/otfried/generic/ipe/7.2/ipe-7.2.14-src.tar.gz" #TODO 7.2.8 have a zoom error on Ubuntu 16.04.
 
 version=$(echo $link | grep -ioP '[0-9]+\.[0-9]+\.[0-9]+')
 #IPE_DIR_INSTALL=/usr/local/share/ipe/$version/ #/usr/local
@@ -46,11 +45,12 @@ version=$(echo $link | grep -ioP '[0-9]+\.[0-9]+\.[0-9]+')
 IPE_DIR_INSTALL=/usr/local # Default installation directory.
 IPE_LIB_FOLDER=/usr/local/share/ipe/$version
 
-#TODO Remove previous version if `/usr/local/share/ipe/$version` exist and does match.
-echo 'Removing previous installtions...'
-sudo rm $IPE_DIR_INSTALL/ipe* -f # Remove.
+# Remove previous version if `/usr/local/share/ipe/$version` exist and does match.
+echo 'Removing previous installations...'
+sudo rm $IPE_DIR_INSTALL/bin/ipe* -f # Remove application.
 sudo rm $APPLICATIONS/*Ipe*.desktop -f # Remove launch shortcuts.
-sudo rm $IPE_LIB_FOLDER/../ -fR # Remove installtion.
+sudo rm $APPLICATIONS/*ipe*.desktop -f # Remove launch shortcuts.
+sudo rm /usr/local/share/ipe/ -fR # Remove plugins and configuration folder installtion.
 
 # Download the selected version.
 echo 'Download source code...'
@@ -63,9 +63,11 @@ rm ~/Downloads/ipe-$version-src.tar.gz
 
 # Install necessary libraries and tools.
 echo 'Installing dependences...'
-sudo apt-get -y install checkinstall qtbase5-dev qtbase5-dev-tools
-sudo apt-get -y install libfreetype6-dev libcairo2-dev libjpeg8-dev
-sudo apt-get -y install libpng12-dev liblua5.3-dev zlib1g-dev
+sudo apt -y install checkinstall zlib1g-dev libgsl-dev
+sudo apt -y install qtbase5-dev qtbase5-dev-tools
+sudo apt -y install libfreetype6-dev libcairo-dev liblua5.3-dev
+sudo apt -y install libjpeg-dev libpng-dev
+sudo apt -y install libcurl4-openssl-dev
 
 # Compile the source code.
 echo 'Compiling the code...'
@@ -102,7 +104,7 @@ test -f "$fileTemplate" &&
 
 # Create the launch desktop link adding to "Open File With..." context menu.
 echo 'Creating launch in desktop...'
-shortcutFileName='Ipe.desktop'
+shortcutFileName='ipe.desktop'
 sudo bash -c "cat >$APPLICATIONS/$shortcutFileName <<EOF
 [Desktop Entry]
 Type=Application
@@ -122,20 +124,50 @@ grep -q "$association" $HOME/.config/mimeapps.list ||
 	echo "$association" >> $HOME/.config/mimeapps.list # Just local user.
 
 #TODO Change the mouse configuration.
-echo 'Returning the mouse configuration to normal (firsts appear at v7.2.9)...'
+echo 'Setting default configurations...'
 
 #if config.platform == "unix" then\n  prefs.scroll.vertical_sign = -1\n end
-#/usr/local/share/ipe/7.2.9/lua/prefs.lua
+file="/usr/local/share/ipe/$version/lua/prefs.lua"
+echo '-- My personal configurations' >> $file
+echo 'prefs.scroll.direction.x = -1' >> $file # Change X direction on the scroll.
+#echo 'prefs.scroll.direction.y = 1' >> $file
+echo 'prefs.initial.grid_size = 4' >> $file # Small grid align.
+echo 'prefs.initial_attributes.pen = "heavier"' >> $file # Heavier trace line.
+echo 'prefs.initial_attributes.farrowsize = "small"' >> $file # Small arrow size back and forward.
+echo 'prefs.initial_attributes.rarrowsize = "small"' >> $file
+#echo 'prefs.initial_attributes.stroke = "darkblue"' >> $file
 
+#file="/usr/local/share/ipe/$version/lua/model.lua"
+#echo 'self.attributes = {
+#    pathmode = "stroked",
+#    stroke = "black",
+#    fill = "white",
+#    pen = "heavier",
+#    dashstyle = "normal",
+#    farrowshape = "arrow/normal(spx)",
+#    rarrowshape = "arrow/normal(spx)",
+#    farrowsize = "small",
+#    rarrowsize = "small",
+#    farrow = false,
+#    rarrow = false,
+#    symbolsize = "normal",
+#    textsize = "normal",
+#    textstyle = "normal",
+#    transformabletext = prefs.transformable_text,
+#    horizontalalignment = "left",
+#    verticalalignment = "baseline",
+#    pinned = "none",
+#    transformations = "affine",
+#    linejoin = "normal",
+#    linecap = "normal",
+#    fillrule = "normal",
+#    markshape = "mark/disk(sx)",
+#    tiling = "normal",
+#    gradient = "normal",
+#    opacity = "opaque", 
+#  }' >> $file
 
-#I change the prefs.scroll.vertical_sign = 1 to prefs.scroll.vertical_sign = -1 (7.2.9)
-
-#prefs.scroll.direction.x
-#prefs.scroll.direction.y
-
-
-#prefs.grid_size = 16     -- points
-#prefs.grid_size = 4     -- points
+# /usr/local/share/ipe/7.2.11/styles/basic
 
 
 #TODO Install the Ipelets, IPE plugins to expand the functionalities.
