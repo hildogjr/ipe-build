@@ -105,6 +105,7 @@ test -f "$fileTemplate" &&
 # Create the launch desktop link adding to "Open File With..." context menu.
 echo 'Creating launch in desktop...'
 shortcutFileName='ipe.desktop'
+shortcutIcon==`find $IPE_LIB_FOLDER/icons/*.png`
 sudo bash -c "cat >$APPLICATIONS/$shortcutFileName <<EOF
 [Desktop Entry]
 Type=Application
@@ -114,7 +115,7 @@ Categories=Graphics;2DGraphics
 Keywords=latex;tex;pdf
 Exec=$IPE_DIR_INSTALL/bin/ipe %F
 Path=$IPE_DIR_INSTALL/bin/
-Icon=$IPE_LIB_FOLDER/icons/ipe512.png
+Icon=$shortcutIcon
 EOF"
 
 # Add the Ipe shortcut to the list of "Open With"
