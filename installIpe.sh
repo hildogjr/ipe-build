@@ -105,7 +105,7 @@ test -f "$fileTemplate" &&
 # Create the launch desktop link adding to "Open File With..." context menu.
 echo 'Creating launch in desktop...'
 shortcutFileName='ipe.desktop'
-shortcutIcon==`find $IPE_LIB_FOLDER/icons/*.png`
+shortcutIcon=`find $IPE_LIB_FOLDER/icons/*.png`
 sudo bash -c "cat >$APPLICATIONS/$shortcutFileName <<EOF
 [Desktop Entry]
 Type=Application
